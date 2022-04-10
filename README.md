@@ -1,14 +1,14 @@
 
-## Descrição Geral do Trabalho
+# Descrição Geral do Trabalho
 
-Neste trabalho deverá ser implementado um arquivo estruturado como uma tabela hash, utilizando-se o
-método de resolução de colisão Hashing Duplo (Double Hashing). Os campos de cada registro a ser armazenado no arquivo são: uma chave, de valor inteiro não negativo; uma cadeia de, no máximo, 20 caracteres, representando um nome; e um outro valor inteiro não negativo, representando uma idade. O programa deverá conter uma constante definida com o seguinte identificador:
+Neste trabalho deverá ser implementado um arquivo estruturado como uma tabela hash, utilizando-se o método de resolução de colisão Hashing Duplo (Double Hashing). Os campos de cada registro a ser armazenado no arquivo são: uma chave, de valor inteiro não negativo; uma cadeia de, no máximo, 20 caracteres, representando um nome; e um outro valor inteiro não negativo, representando uma idade. O programa deverá conter uma constante definida com o seguinte identificador:
 
 > MAXNUMREGS: indica o número máximo de registros do arquivo.
 
-O valor inicial da constante MAXNUMREGS deve ser 11. O programa deve ser feito de forma que este valor possa ser modificado. As funções de hashing a serem utilizadas, denominadas h1 e h2, são: 
+O valor inicial da constante MAXNUMREGS deve ser 11. O programa deve ser feito de forma que este valor possa ser modificado. As funções de hashing a serem utilizadas, denominadas h1 e h2, são:
 
-> h1(chave) = chave mod MAXNUMREGS 
+> h1(chave) = chave mod MAXNUMREGS
+>
 > h2(chave) = max{[chave/MAXNUMREGS] mod MAXNUMREGS, 1}
 
 **Observações importantes**:
@@ -17,7 +17,7 @@ O valor inicial da constante MAXNUMREGS deve ser 11. O programa deve ser feito d
 * Adicionalmente, lembre-se de que é assumido que a memória principal é insuficiente para armazenar todos os dados. Portanto, uma implementação que mantém a estrutura do arquivo em memória (em um vetor, por exemplo) e o salva por completo no arquivo será considerada inaceitável.
 * O arquivo deve ser armazenado em formato binário.
 
-## Formato de Entrada e Saída
+# Formato de Entrada e Saída
 
 A entrada conterá uma sequência de operações sobre o arquivo. As operações e seus formatos estão descritos abaixo:
 
@@ -38,3 +38,9 @@ A entrada conterá uma sequência de operações sobre o arquivo. As operações
 * Em particular, o programa não deve conter menus.
 * Não deve haver espaço entre linhas na saída.
 * A saída deve apresentar os caracteres em letras minúsculas.
+
+# Exemplo de entrada e saída
+
+| Entrada                                                                                                                                      | Saída                                                                                                                                                                                                      |
+|----------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| i<br>16<br>joao<br>20<br>i<br>18<br>maria<br>30<br>i<br>27<br>carlos<br>15<br>i<br>29<br>ana<br>18<br>c<br>29<br>c<br>16<br>c<br>9<br>m<br>e | insercao com sucesso: 16<br>insercao com sucesso: 18<br>insercao com sucesso: 27<br>insercao com sucesso: 29<br>chave: 29<br>ana<br>18<br>chave: 16<br>joao<br>20<br>chave nao encontrada: 9<br>2.0<br>2.0 |
