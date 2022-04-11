@@ -131,7 +131,7 @@ void removerRegistro(){
     fseek(arquivo, posicao * sizeof(Registro), SEEK_SET);
     fread(&registro, sizeof(Registro), 1, arquivo);
     
-    if (registro.dados.chave == chave) {
+    if (registro.dados.chave == chave && registro.status != STATUS_REMOVIDO) {
       registro.status = STATUS_REMOVIDO;
       fseek(arquivo, posicao * sizeof(Registro), SEEK_SET);
       fwrite(&registro, sizeof(Registro), 1, arquivo);
