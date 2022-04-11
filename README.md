@@ -43,3 +43,16 @@ A entrada conterá uma sequência de operações sobre o arquivo. As operações
 | Entrada                                                                                                                                      | Saída                                                                                                                                                                                                      |
 |----------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | i<br>16<br>joao<br>20<br>i<br>18<br>maria<br>30<br>i<br>27<br>carlos<br>15<br>i<br>29<br>ana<br>18<br>c<br>29<br>c<br>16<br>c<br>9<br>m<br>e | insercao com sucesso: 16<br>insercao com sucesso: 18<br>insercao com sucesso: 27<br>insercao com sucesso: 29<br>chave: 29<br>ana<br>18<br>chave: 16<br>joao<br>20<br>chave nao encontrada: 9<br>2.0<br>2.0 |
+
+# Executar o arquivo
+
+Navege até a pasta `src` e execute o comando `make`
+
+```bash
+cd src/
+make
+```
+ou execute diretamente o arquivo `main.c`:
+```bash
+gcc -o main src/main.c && ./main < src/in.txt
+```
