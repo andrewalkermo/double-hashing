@@ -58,7 +58,7 @@ int main() {
 
 void lerComandos(){
   char comando;
-  while (scanf("%c\n", &comando)) {
+  while (scanf("%s", &comando)) {
     switch (comando) {
       case INSERE_REGISTRO:
         inserirRegistro();
@@ -86,9 +86,9 @@ void lerComandos(){
 void inserirRegistro() {
   Registro novoRegistro;
   novoRegistro.status = STATUS_OCUPADO;
-  scanf("%d\n", &novoRegistro.dados.chave);
-  scanf("%s\n", novoRegistro.dados.nome);
-  scanf("%d\n", &novoRegistro.dados.idade);
+  scanf("%d", &novoRegistro.dados.chave);
+  scanf("%s", novoRegistro.dados.nome);
+  scanf("%d", &novoRegistro.dados.idade);
 
   Registro registro;
   FILE *arquivo = abreArquivo(FILE_NAME, "r+");
@@ -124,7 +124,7 @@ void inserirRegistro() {
 
 void consultarRegistro() {
   int chave;
-  scanf("%d\n", &chave);
+  scanf("%d", &chave);
   Registro registro;
   FILE *arquivo = abreArquivo(FILE_NAME, "r");
   
@@ -135,7 +135,7 @@ void consultarRegistro() {
     fseek(arquivo, posicao * sizeof(Registro), SEEK_SET);
     fread(&registro, sizeof(Registro), 1, arquivo);
     
-    if (registro.dados.chave == chave) {
+    if (registro.dados.chave == chave && registro.status == STATUS_OCUPADO) {
       printf("chave: %d\n", chave);
       printf("%s\n", registro.dados.nome);
       printf("%d\n", registro.dados.idade);
@@ -154,7 +154,7 @@ void consultarRegistro() {
 
 void removerRegistro(){
   int chave;
-  scanf("%d\n", &chave);
+  scanf("%d", &chave);
   Registro registro;
   FILE *arquivo = abreArquivo(FILE_NAME, "r+");
   
