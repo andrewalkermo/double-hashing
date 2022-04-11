@@ -45,6 +45,8 @@ void removerRegistro();
 void imprimirArquivo();
 void mediaDeAcessos();
 void inicializarArquivo();
+void registraSucesso(int acessos);
+void registraFalha(int acessos);
 
 FILE *abreArquivo(char *nomeArquivo, char *modo);
 
@@ -103,22 +105,19 @@ void inserirRegistro() {
       fwrite(&novoRegistro, sizeof(Registro), 1, arquivo);
       printf("insercao com sucesso: %d\n", novoRegistro.dados.chave);
       fclose(arquivo);
-      totalAcessosComSucesso += acessos;
-      totalConsultasComSucesso++;
+      registraSucesso(acessos);
       return;
     } else if (registro.dados.chave == novoRegistro.dados.chave) {
       printf("chave ja existente: %d\n", novoRegistro.dados.chave);
       fclose(arquivo);
       return;
-      totalAcessosComFalha += acessos;
-      totalConsultasComFalha++;
+      registraFalha(acessos);
     }
     
     posicao = proximaPosicao(posicao, hashDois(novoRegistro.dados.chave));
   } while (acessos < MAXNUMREGS);
 
-  totalAcessosComFalha += acessos;
-  totalConsultasComFalha++;
+  registraFalha(acessos);
   printf("insercao de chave sem sucesso - arquivo cheio: %d\n", novoRegistro.dados.chave);
   fclose(arquivo);
 }
@@ -141,8 +140,7 @@ void consultarRegistro() {
       printf("%s\n", registro.dados.nome);
       printf("%d\n", registro.dados.idade);
       fclose(arquivo);
-      totalAcessosComSucesso += acessos;
-      totalConsultasComSucesso++;
+      registraSucesso(acessos);
       return;
     }
     posicao = proximaPosicao(posicao, hashDois(chave));
@@ -173,18 +171,16 @@ void removerRegistro(){
       fwrite(&registro, sizeof(Registro), 1, arquivo);
       printf("chave removida com sucesso: %d\n", chave);
       fclose(arquivo);
-      totalAcessosComSucesso += acessos;
-      totalConsultasComSucesso++;
+      registraSucesso(acessos);
       return;
     }
 
     posicao = proximaPosicao(posicao, hashDois(chave));
   } while (acessos < MAXNUMREGS && registro.status != STATUS_LIVRE);
-  
+
   printf("chave nao encontrada: %d\n", chave);
   fclose(arquivo);
-  totalAcessosComFalha += acessos;
-  totalConsultasComFalha++;
+  registraFalha(acessos);
 }
 
 void imprimirArquivo(){
@@ -246,4 +242,14 @@ FILE *abreArquivo(char *nomeArquivo, char *modo){
 
 int proximaPosicao(int posicaoAtual, int salto){
   return (posicaoAtual + salto) % MAXNUMREGS;
+}
+
+void registraSucesso(int acessos){
+  totalAcessosComSucesso += acessos;
+  totalConsultasComSucesso++;
+}
+
+void registraFalha(int acessos){
+  totalAcessosComFalha += acessos;
+  totalConsultasComFalha++;
 }
