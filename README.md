@@ -52,7 +52,9 @@ Navege até a pasta `src` e execute o comando `make`
 cd src/
 make
 ```
+
 ou execute diretamente o arquivo `main.c`:
+
 ```bash
 gcc -o main src/main.c && ./main < src/in.txt
 ```
