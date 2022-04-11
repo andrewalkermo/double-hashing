@@ -91,6 +91,7 @@ void consultarRegistro() {
   do {
     fseek(arquivo, posicao * sizeof(Registro), SEEK_SET);
     fread(&registro, sizeof(Registro), 1, arquivo);
+    
     if (registro.dados.chave == chave) {
       printf("chave: %d\n", chave);
       printf("%s\n", registro.dados.nome);
@@ -102,10 +103,11 @@ void consultarRegistro() {
       fclose(arquivo);
       return;
     }
+    
     posicao = proximaPosicao(posicao, hashDois(chave));
     acessos++;
   } while (acessos < MAXNUMREGS);
-
+  
   printf("chave nao encontrada: %d\n", chave);
   fclose(arquivo);
 }
@@ -113,13 +115,41 @@ void consultarRegistro() {
 void removerRegistro(){
   int chave;
   scanf("%d\n", &chave);
-  printf("LOG - Removendo registro\n");
+  Registro registro;
+  FILE *arquivo = abreArquivo(FILE_NAME, "r+");
+  
+  int posicao = hashUm(chave);
+  int acessos = 0;
+  do {
+    fseek(arquivo, posicao * sizeof(Registro), SEEK_SET);
+    fread(&registro, sizeof(Registro), 1, arquivo);
+    
+    if (registro.dados.chave == chave) {
+      registro.status = STATUS_REMOVIDO;
+      fseek(arquivo, posicao * sizeof(Registro), SEEK_SET);
+      fwrite(&registro, sizeof(Registro), 1, arquivo);
+      printf("chave removida com sucesso: %d\n", chave);
+      fclose(arquivo);
+      return;
+    } else if (registro.status == STATUS_LIVRE) {
+      printf("chave nao encontrada: %d\n", chave);
+      fclose(arquivo);
+      return;
+    }
+    
+    posicao = proximaPosicao(posicao, hashDois(chave));
+    acessos++;
+  } while (acessos < MAXNUMREGS);
+  
+  printf("chave nao encontrada: %d\n", chave);
+  fclose(arquivo);
 }
+
 void imprimirArquivo(){
   int i;
   Registro registro;
   FILE *arquivo = abreArquivo(FILE_NAME, "r");
-  fseek (arquivo, 0, SEEK_SET);
+  
   for (i = 0; i < MAXNUMREGS; i++) {
     fread (&registro, sizeof (Registro), 1, arquivo);
     if (registro.status == STATUS_OCUPADO) {
@@ -130,8 +160,10 @@ void imprimirArquivo(){
       printf("%d: *\n", i);
     }
   }
+  
   fclose(arquivo);
 }
+
 void mediaDeAcessos(){
   printf("LOG - Calculando media de acessos\n");
 }
