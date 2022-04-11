@@ -3,13 +3,12 @@
 
 Neste trabalho deverá ser implementado um arquivo estruturado como uma tabela hash, utilizando-se o método de resolução de colisão Hashing Duplo (Double Hashing). Os campos de cada registro a ser armazenado no arquivo são: uma chave, de valor inteiro não negativo; uma cadeia de, no máximo, 20 caracteres, representando um nome; e um outro valor inteiro não negativo, representando uma idade. O programa deverá conter uma constante definida com o seguinte identificador:
 
-> MAXNUMREGS: indica o número máximo de registros do arquivo.
+* MAXNUMREGS: indica o número máximo de registros do arquivo.
 
 O valor inicial da constante MAXNUMREGS deve ser 11. O programa deve ser feito de forma que este valor possa ser modificado. As funções de hashing a serem utilizadas, denominadas h1 e h2, são:
 
-> h1(chave) = chave mod MAXNUMREGS
->
-> h2(chave) = max{[chave/MAXNUMREGS] mod MAXNUMREGS, 1}
+* h1(chave) = chave mod MAXNUMREGS
+* h2(chave) = max{[chave/MAXNUMREGS] mod MAXNUMREGS, 1}
 
 **Observações importantes**:
 

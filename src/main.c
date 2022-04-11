@@ -1,16 +1,25 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include "utils.h"
 
-#include "types.h"
+int hashUm(int chave);
+int hashDois(int chave);
 
+void lerComandos();
 void inserirRegistro();
 void consultarRegistro();
 void removerRegistro();
 void imprimirArquivo();
 void mediaDeAcessos();
+void inicializarArquivo();
+
 
 int main() {
 
+  inicializarArquivo();
+  lerComandos();
+  return 0;
+}
+
+void lerComandos(){
   char comando;
   while (scanf("%c\n", &comando)) {
     switch (comando) {
@@ -30,29 +39,75 @@ int main() {
         mediaDeAcessos();
         break;
       case FIM_DOS_COMANDOS:
-        return 0;
+        return;
       default:
-        printf("LOG - Comando invalido\n");
-        return 1;
-        break;
+        exit(-1);
     }
   }
-  return 0;
 }
 
 void inserirRegistro() {
+  Registro novoRegistro;
+  novoRegistro.status = STATUS_OCUPADO;
+  scanf("%d\n", &novoRegistro.dados.chave);
+  scanf("%s\n", novoRegistro.dados.nome);
+  scanf("%d\n", &novoRegistro.dados.idade);
+
   Registro registro;
-  scanf("%d\n", &registro.dados.chave);
-  scanf("%s\n", registro.dados.nome);
-  scanf("%d\n", &registro.dados.idade);
-  registro.ocupado = true;
-  printf("LOG - Registro inserido: %d %s %d\n", registro.dados.chave, registro.dados.nome, registro.dados.idade);
+  FILE *arquivo = abreArquivo(FILE_NAME, "r+");
+  int posicao = hashUm(novoRegistro.dados.chave);
+  int acessos = 0;
+  
+  do {
+    fseek(arquivo, posicao * sizeof(Registro), SEEK_SET);
+    fread(&registro, sizeof(Registro), 1, arquivo);
+    if (registro.status != STATUS_OCUPADO) {
+      fseek(arquivo, posicao *sizeof(Registro), SEEK_SET);
+      fwrite(&novoRegistro, sizeof(Registro), 1, arquivo);
+      printf("insercao com sucesso: %d\n", novoRegistro.dados.chave);
+      fclose(arquivo);
+      return;
+    } else if (registro.dados.chave == novoRegistro.dados.chave) {
+      printf("chave ja existente: %d\n", novoRegistro.dados.chave);
+      fclose(arquivo);
+      return;
+    }
+    posicao = proximaPosicao(posicao, hashDois(novoRegistro.dados.chave));
+    acessos++;
+  } while (registro.status == STATUS_OCUPADO && acessos < MAXNUMREGS);
+  
+  printf("insercao de chave sem sucesso - arquivo cheio: %d\n", novoRegistro.dados.chave);
+  fclose(arquivo);
 }
 
 void consultarRegistro() {
   int chave;
   scanf("%d\n", &chave);
-  printf("LOG - Consultando registro\n");
+  Registro registro;
+  FILE *arquivo = abreArquivo(FILE_NAME, "r");
+  
+  int posicao = hashUm(chave);
+  int acessos = 0;
+  do {
+    fseek(arquivo, posicao * sizeof(Registro), SEEK_SET);
+    fread(&registro, sizeof(Registro), 1, arquivo);
+    if (registro.dados.chave == chave) {
+      printf("chave: %d\n", chave);
+      printf("%s\n", registro.dados.nome);
+      printf("%d\n", registro.dados.idade);
+      fclose(arquivo);
+      return;
+    } else if (registro.status == STATUS_LIVRE) {
+      printf("chave nao encontrada: %d\n", chave);
+      fclose(arquivo);
+      return;
+    }
+    posicao = proximaPosicao(posicao, hashDois(chave));
+    acessos++;
+  } while (acessos < MAXNUMREGS);
+
+  printf("chave nao encontrada: %d\n", chave);
+  fclose(arquivo);
 }
 
 void removerRegistro(){
@@ -61,8 +116,42 @@ void removerRegistro(){
   printf("LOG - Removendo registro\n");
 }
 void imprimirArquivo(){
-  printf("LOG - Imprimindo arquivo\n");
+  int i;
+  Registro registro;
+  FILE *arquivo = abreArquivo(FILE_NAME, "r");
+  fseek (arquivo, 0, SEEK_SET);
+  for (i = 0; i < MAXNUMREGS; i++) {
+    fread (&registro, sizeof (Registro), 1, arquivo);
+    if (registro.status == STATUS_OCUPADO) {
+      printf("%d: %d %s %d\n", i, registro.dados.chave, registro.dados.nome, registro.dados.idade);
+    } else if (registro.status == STATUS_LIVRE) {
+      printf("%d: vazio\n", i);
+    } else {
+      printf("%d: *\n", i);
+    }
+  }
+  fclose(arquivo);
 }
 void mediaDeAcessos(){
   printf("LOG - Calculando media de acessos\n");
+}
+
+void inicializarArquivo(){
+  FILE *arquivo = abreArquivo(FILE_NAME, "w+");
+
+  Registro registro;
+  registro.status = STATUS_LIVRE;
+  
+  for (int i = 0; i < MAXNUMREGS; i++) {
+    fwrite(&registro, sizeof(Registro), 1, arquivo);
+  }
+  fclose(arquivo);
+}
+
+int hashUm(int chave){
+  return chave % MAXNUMREGS;
+}
+
+int hashDois(int chave){
+  return max((chave / MAXNUMREGS) % MAXNUMREGS, 1);
 }
