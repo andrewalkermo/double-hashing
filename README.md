@@ -46,15 +46,28 @@ A entrada conterá uma sequência de operações sobre o arquivo. As operações
 
 # Executar o arquivo
 
-Navege até a pasta `src` e execute o comando `make`
+Execute o comando `make`
 
 ```bash
-cd src/
-make
+$ make
+
+rm -f main
+gcc -o main src/main.c && ./main
 ```
 
 ou execute diretamente o arquivo `main.c`:
 
 ```bash
-gcc -o main src/main.c && ./main < src/in.txt
+$ gcc -o main src/main.c && ./main
+```
+
+Para executar os testes, execute o comando `make test`
+
+```bash
+$ make test
+
+gcc -o main src/main.c && ./main < tests/in.txt > out_test.txt && diff -w out_test.txt tests/out.txt && echo "OK" || exit 1
+OK
+gcc -o main src/main.c && ./main < tests/in_full.txt > out_test.txt && diff -w out_test.txt tests/out_full.txt && echo "OK" || exit 1
+OK
 ```
