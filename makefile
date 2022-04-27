@@ -7,5 +7,4 @@ clean:
 	rm -f main
 
 test:
-	./tests/test_main.sh
-  ./tests/test_main.sh
+	./tests/run_tests.sh
