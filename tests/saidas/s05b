@@ -1,0 +1,39 @@
+0: vazio
+1: 12 ndoze 22
+2: vazio
+3: 14 nquatorze 24
+4: vazio
+5: 25 nvinteecinco 35
+6: vazio
+7: 27 nvinteesete 37
+8: vazio
+9: 23 nvinteetres 33
+10: vazio
+chave removida com sucesso: 12
+chave removida com sucesso: 25
+0: vazio
+1: *
+2: vazio
+3: 14 nquatorze 24
+4: vazio
+5: *
+6: vazio
+7: 27 nvinteesete 37
+8: vazio
+9: 23 nvinteetres 33
+10: vazio
+chave: 23
+nvinteetres
+33
+insercao com sucesso: 49
+0: vazio
+1: *
+2: vazio
+3: 14 nquatorze 24
+4: vazio
+5: 49 nquarentaenove 59
+6: vazio
+7: 27 nvinteesete 37
+8: vazio
+9: 23 nvinteetres 33
+10: vazio
