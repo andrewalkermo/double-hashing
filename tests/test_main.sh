@@ -1,4 +1,5 @@
-#!bin/bash
+#!/bin/bash
+
 result=0
 for input in tests/*.in; do
   output=${input%.in}.out
@@ -10,4 +11,4 @@ done
 rm -f registros
 rm -f test.out
 rm -f main
-return $result
+exit $result
