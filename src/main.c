@@ -45,6 +45,8 @@ void removerRegistro();
 void imprimirArquivo();
 void mediaDeAcessos();
 void inicializarArquivo();
+void registraSucesso(int acessos);
+void registraFalha(int acessos);
 
 FILE *abreArquivo(char *nomeArquivo, char *modo);
 
@@ -56,7 +58,7 @@ int main() {
 
 void lerComandos(){
   char comando;
-  while (scanf("%c\n", &comando)) {
+  while (scanf("%s", &comando)) {
     switch (comando) {
       case INSERE_REGISTRO:
         inserirRegistro();
@@ -84,9 +86,9 @@ void lerComandos(){
 void inserirRegistro() {
   Registro novoRegistro;
   novoRegistro.status = STATUS_OCUPADO;
-  scanf("%d\n", &novoRegistro.dados.chave);
-  scanf("%s\n", novoRegistro.dados.nome);
-  scanf("%d\n", &novoRegistro.dados.idade);
+  scanf("%d", &novoRegistro.dados.chave);
+  scanf("%s", novoRegistro.dados.nome);
+  scanf("%d", &novoRegistro.dados.idade);
 
   Registro registro;
   FILE *arquivo = abreArquivo(FILE_NAME, "r+");
@@ -103,29 +105,26 @@ void inserirRegistro() {
       fwrite(&novoRegistro, sizeof(Registro), 1, arquivo);
       printf("insercao com sucesso: %d\n", novoRegistro.dados.chave);
       fclose(arquivo);
-      totalAcessosComSucesso += acessos;
-      totalConsultasComSucesso++;
+      registraSucesso(acessos);
       return;
     } else if (registro.dados.chave == novoRegistro.dados.chave) {
       printf("chave ja existente: %d\n", novoRegistro.dados.chave);
       fclose(arquivo);
       return;
-      totalAcessosComFalha += acessos;
-      totalConsultasComFalha++;
+      registraFalha(acessos);
     }
     
     posicao = proximaPosicao(posicao, hashDois(novoRegistro.dados.chave));
   } while (acessos < MAXNUMREGS);
 
-  totalAcessosComFalha += acessos;
-  totalConsultasComFalha++;
+  registraFalha(acessos);
   printf("insercao de chave sem sucesso - arquivo cheio: %d\n", novoRegistro.dados.chave);
   fclose(arquivo);
 }
 
 void consultarRegistro() {
   int chave;
-  scanf("%d\n", &chave);
+  scanf("%d", &chave);
   Registro registro;
   FILE *arquivo = abreArquivo(FILE_NAME, "r");
   
@@ -136,13 +135,12 @@ void consultarRegistro() {
     fseek(arquivo, posicao * sizeof(Registro), SEEK_SET);
     fread(&registro, sizeof(Registro), 1, arquivo);
     
-    if (registro.dados.chave == chave) {
+    if (registro.dados.chave == chave && registro.status == STATUS_OCUPADO) {
       printf("chave: %d\n", chave);
       printf("%s\n", registro.dados.nome);
       printf("%d\n", registro.dados.idade);
       fclose(arquivo);
-      totalAcessosComSucesso += acessos;
-      totalConsultasComSucesso++;
+      registraSucesso(acessos);
       return;
     }
     posicao = proximaPosicao(posicao, hashDois(chave));
@@ -156,7 +154,7 @@ void consultarRegistro() {
 
 void removerRegistro(){
   int chave;
-  scanf("%d\n", &chave);
+  scanf("%d", &chave);
   Registro registro;
   FILE *arquivo = abreArquivo(FILE_NAME, "r+");
   
@@ -173,18 +171,16 @@ void removerRegistro(){
       fwrite(&registro, sizeof(Registro), 1, arquivo);
       printf("chave removida com sucesso: %d\n", chave);
       fclose(arquivo);
-      totalAcessosComSucesso += acessos;
-      totalConsultasComSucesso++;
+      registraSucesso(acessos);
       return;
     }
 
     posicao = proximaPosicao(posicao, hashDois(chave));
   } while (acessos < MAXNUMREGS && registro.status != STATUS_LIVRE);
-  
+
   printf("chave nao encontrada: %d\n", chave);
   fclose(arquivo);
-  totalAcessosComFalha += acessos;
-  totalConsultasComFalha++;
+  registraFalha(acessos);
 }
 
 void imprimirArquivo(){
@@ -252,4 +248,14 @@ FILE *abreArquivo(char *nomeArquivo, char *modo){
 
 int proximaPosicao(int posicaoAtual, int salto){
   return (posicaoAtual + salto) % MAXNUMREGS;
+}
+
+void registraSucesso(int acessos){
+  totalAcessosComSucesso += acessos;
+  totalConsultasComSucesso++;
+}
+
+void registraFalha(int acessos){
+  totalAcessosComFalha += acessos;
+  totalConsultasComFalha++;
 }
